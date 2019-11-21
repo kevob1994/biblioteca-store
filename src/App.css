@@ -31,3 +31,19 @@
     transform: rotate(360deg);
   }
 }
+
+.box {
+  position:relative;
+  display:block;
+  margin-left: 15px;
+  float: left;
+  min-height: 100px;
+  width: 200px;
+
+}
+
+span {
+  font-weight: 500;
+  color: black;
+}
+

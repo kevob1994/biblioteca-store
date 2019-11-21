@@ -17,8 +17,8 @@ function App() {
         <div className="container">
           <Switch>
           {/* <Redirect exact from='/' to='/subscriptores' /> */}
-            <Route path="/suscriptores" component={Subscribers}/>
-            <Route exact path="/suscriptores/:id" component={ShowSubscriber}/>
+            <Route exact path="/suscriptores" component={Subscribers}/>
+            <Route exact path="/suscriptores/mostrar/:id" component={ShowSubscriber}/>
             <Route exact path="/suscriptores/nuevo" component={NewSubscriber}/>
             <Route exact path="/suscriptores/editar/:id" component={EditSubscriber}/>
           </Switch>

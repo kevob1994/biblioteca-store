@@ -11,8 +11,8 @@ const firebaseConfig = {
     projectId: "bibliostore-96d7a",
     storageBucket: "bibliostore-96d7a.appspot.com",
     messagingSenderId: "763068264160",
-    appId: "1:763068264160:web:dddf90b5bbe7614b5cea85",
-    measurementId: "G-21VEC9YQEM"
+    appId: "1:763068264160:web:af9c24190bbe54745cea85",
+    measurementId: "G-WXJLD5MJ7Q"
 }
 
 firebase.initializeApp(firebaseConfig)

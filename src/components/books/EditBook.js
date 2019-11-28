@@ -6,40 +6,41 @@ import { firestoreConnect } from 'react-redux-firebase';
 import Spinner from './../layout/Spinner';
 import PropTypes from 'prop-types';
 
-class EditSubscriber extends Component {
+class EditBook extends Component {
     
-    nombreInput = createRef();
-    apellidoInput = createRef();
-    carreraInput = createRef();
-    codigoInput = createRef();
-    
+    tituloInput = createRef();
+    ISBMInput = createRef();
+    editorialInput = createRef();
+    existenciaInput = createRef();
+
     handleOnSubmit = e => {
         e.preventDefault()
-        const editSubscriber = {
-            nombre: this.nombreInput.current.value,
-            apellido: this.apellidoInput.current.value,
-            carrera: this.carreraInput.current.value,
-            codigo: this.codigoInput.current.value
+        const editBook = {
+            titulo: this.tituloInput.current.value,
+            ISBM: this.ISBMInput.current.value,
+            editorial: this.editorialInput.current.value,
+            existencia: this.existenciaInput.current.value
         }
 
-        const { suscriptor, firestore, history } = this.props
+        const { libro, firestore, history } = this.props
 
         firestore.update({ 
-            collection: 'suscriptores',
-            doc: suscriptor.id
-        }, editSubscriber)
-            .then( () => {history.push('/suscriptores')})
+            collection: 'libros',
+            doc: libro.id
+        }, editBook)
+            .then( () => {history.push('/')})
     }
-    render() {
-        const {suscriptor} = this.props;
 
-        if(!suscriptor) return <Spinner />
+    render() {
+        const {libro} = this.props;
+        console.log(libro)
+        if(!libro) return <Spinner />
 
         return (
             <div className="row">
                 <div className="col-12 mb-4">
                     <Link 
-                        to={`/suscriptores`}
+                        to={`/`}
                         className="btn btn-secondary"
                     >
                         <i className="fas fa-arrow-circle-left"></i> {''}
@@ -49,65 +50,65 @@ class EditSubscriber extends Component {
                 <div className="col-12">
                     <h2>
                         <i className="fas fa-user"></i> {''}
-                        Editar Suscriptor
+                        Editar Libro
                     </h2>
                     <div className="row justify-content-center">
                         <div className="col-md-8 mt-5">
                             <form onSubmit={this.handleOnSubmit}>
 
                                 <div className="form-group">
-                                    <label >Nombre:</label>
+                                    <label >Titulo:</label>
                                     <input 
                                         type="text" 
                                         className="form-control"
-                                        name="nombre"
-                                        placeholder="Nombre del Suscriptor"
+                                        name="titulo"
+                                        placeholder="Titulo o Nombre de Libro"
                                         required
-                                        ref={this.nombreInput}
-                                        defaultValue={suscriptor.nombre}
+                                        ref={this.tituloInput}
+                                        defaultValue={libro.titulo}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label >Apellido:</label>
+                                    <label >Editorial:</label>
                                     <input 
                                         type="text" 
                                         className="form-control"
-                                        name="apellido"
-                                        placeholder="Apellido del Suscriptor"
+                                        name="editorial"
+                                        placeholder="Editorial del Libro"
                                         required
-                                        ref={this.apellidoInput}
-                                        defaultValue={suscriptor.apellido}
+                                        ref={this.editorialInput}
+                                        defaultValue={libro.editorial}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label >Carrera:</label>
+                                    <label >ISBM:</label>
                                     <input 
                                         type="text" 
                                         className="form-control"
-                                        name="carrera"
-                                        placeholder="Carrera del Suscriptor"
+                                        name="ISBM"
+                                        placeholder="ISBN del libro"
                                         required
-                                        ref={this.carreraInput}
-                                        defaultValue={suscriptor.carrera}
+                                        ref={this.ISBMInput}
+                                        defaultValue={libro.ISBM}
                                     />
                                 </div>
 
                                 <div className="form-group">
                                     <label >Codigo:</label>
                                     <input 
-                                        type="text" 
+                                        type="number" 
                                         className="form-control"
-                                        name="codigo"
-                                        placeholder="Codigo del Suscriptor"
+                                        name="existencia"
+                                        placeholder="Cantidad del Libro"
                                         required
-                                        ref={this.codigoInput}
-                                        defaultValue={suscriptor.codigo}
+                                        ref={this.existenciaInput}
+                                        defaultValue={libro.existencia}
                                     />
                                 </div>
 
-                                <input type="submit" className="btn btn-success" value="Editar suscriptor"/>
+                                <input type="submit" className="btn btn-success" value="Editar libro"/>
                             </form>
                         </div>
                     </div>
@@ -117,18 +118,17 @@ class EditSubscriber extends Component {
     }
 }
 
-EditSubscriber.propTypes = {
+EditBook.propTypes = {
     firestore : PropTypes.object.isRequired,
-    suscriptores: PropTypes.object.isRequired,
 }
  
 export default compose(
     firestoreConnect( props => [{
-        collection: 'suscriptores',
-        storeAs : 'suscriptor',
+        collection: 'libros',
+        storeAs : 'libro',
         doc : props.match.params.id
     }]),
     connect(({ firestore: {ordered}}, props) => ({
-        suscriptor : ordered.suscriptor && ordered.suscriptor[0]
+        libro : ordered.libro && ordered.libro[0]
     }))
-)(EditSubscriber)
+)(EditBook)

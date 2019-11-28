@@ -35,13 +35,13 @@ const ShowSubscriber = ({ suscriptor }) => {
             </div>
             <div className="box">
                 <p>
-                    <span className="font-wight-bold">
+                    <span className="font-weight-bold">
                         Carrera: 
                     </span> {''}
                     {suscriptor.carrera}
                 </p>
                 <p>
-                    <span className="font-wight-bold">
+                    <span className="font-weight-bold">
                         Codigo: 
                     </span> {''}
                     {suscriptor.codigo}

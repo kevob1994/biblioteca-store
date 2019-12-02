@@ -1,0 +1,1 @@
+export const SEARCH_USER_LOAN = 'SEARCH_USER_LOAN';

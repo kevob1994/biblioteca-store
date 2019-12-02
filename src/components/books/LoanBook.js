@@ -6,13 +6,14 @@ import { firestoreConnect } from 'react-redux-firebase';
 import Spinner from './../layout/Spinner';
 import PropTypes from 'prop-types';
 
-import CardSubscriber from '../subscribers/CardSubscriber'
+import CardSubscriber from '../subscribers/CardSubscriber';
+
+import {searchUser} from './../../actions/searchUserActions'
 
 class LoanBook extends Component {
     state = {
         noResult: false,
-        search: '',
-        dataSubs: {}
+        search: ''
     }
 
     handleOnChange = e => {
@@ -23,23 +24,24 @@ class LoanBook extends Component {
         e.preventDefault();
         
         const { search } = this.state;
-        const { firestore } = this.props;
+        const { firestore, searchUser } = this.props;
 
         const collection = firestore.collection('suscriptores')
         const query = collection.where("codigo","==", search).get();
         // console.log(query)
-
+        
         query.then( data => {
             if(data.empty){
+                searchUser({})
                 this.setState({
-                    dataSubs : {}, 
                     noResult: true
                 })
             } else {
+                console.log("ENTROOOOO")
                 const response = data.docs[0]
-                
+                console.log(response.data())
+                searchUser({...response.data()})
                 this.setState({
-                    dataSubs : {...this.state.dataSubs, ...response.data()}, 
                     noResult: false
                 })
             }
@@ -50,20 +52,20 @@ class LoanBook extends Component {
     }
 
     getLoan = () => {
-        const student = this.state.dataSubs
+        const { user, firestore, history } = this.props
 
-        student.fecha_solicitud = new Date().toLocaleDateString();
+        user.fecha_solicitud = new Date().toLocaleDateString();
 
-        const bookUpdated = this.props.libro;
-
-        bookUpdated.prestados.push( student )
-
-        const {firestore, history} = this.props
+        let bookLoan = []
+        bookLoan = [...this.props.libro.prestados, user];
+        const libro = {...this.props.libro}
+        delete  libro.prestados
+        libro.prestados = bookLoan
 
         firestore.update({
             collection: 'libros',
-            doc: bookUpdated.id,
-        }, bookUpdated).then(history.push('/'))
+            doc: libro.id,
+        }, libro).then(history.push('/'))
     }
 
     render() {
@@ -72,17 +74,29 @@ class LoanBook extends Component {
 
         if(!libro) return <Spinner />
         
-        const { noResult, dataSubs } = this.state;
+        const { noResult } = this.state;
+        const { user } = this.props;
 
+        console.log("this.props")
+        console.log(this.props)
         var cardStudent, btnRequest;
 
-        if(dataSubs.nombre) {
-            cardStudent = <CardSubscriber student={dataSubs}/>
+        if(user.nombre) {
+            cardStudent = <CardSubscriber student={user}/>
             
             btnRequest = <button type="button" className="btn btn-primary btn-block" onClick={this.getLoan}> Solicitar Prestamo</button>
         } else {
-            cardStudent = null
-            btnRequest = null
+            cardStudent = null;
+            btnRequest = null;
+        }
+
+
+        let msgResult = '';
+
+        if(noResult){
+            msgResult = <div className="alert alert-danger text-center font-weight-bold ">No hay resultado para ese codigo </div>
+        } else {
+            msgResult = null
         }
 
         return (
@@ -124,6 +138,8 @@ class LoanBook extends Component {
 
                             {cardStudent}
                             {btnRequest}
+
+                            {msgResult}
                         </div>
                     </div>
                 </div>
@@ -142,7 +158,8 @@ export default compose(
         storeAs : 'libro',
         doc : props.match.params.id
     }]),
-    connect(({ firestore: {ordered}}, props) => ({
-        libro : ordered.libro && ordered.libro[0]
-    }))
+    connect(({ firestore: {ordered}, user}, props) => ({
+        libro : ordered.libro && ordered.libro[0],
+        user: user
+    }),{searchUser})
 )(LoanBook)
